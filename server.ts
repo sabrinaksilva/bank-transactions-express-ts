@@ -2,7 +2,6 @@ import dotenv from "dotenv";
 import { mysqlDataSource } from "./src/configuration/datasource.config"
 import "reflect-metadata";
 import app from './src/configuration/app.config';
-import { BankAccount } from "./src/entities/models/account.model";
 
 
 const connect = async () => {

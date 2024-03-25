@@ -4,17 +4,18 @@ import { CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity({ name: "Users" })
 export default class User {
-    @PrimaryGeneratedColumn()
-    "id"?: number;
+    @PrimaryGeneratedColumn() id?: number;
+
+
 
     @Column({ nullable: false })
-    "name"?: string;
+    name?: string;
+
+    @Column({ nullable: false, unique: true })
+    document?: string;
 
     @Column({ nullable: false })
-    "login"?: string;
+    passwordEncrypted?: string;
 
-    @Column({ nullable: false })
-    "passwordEncrypted"?: string;
-    
-    accounts: any;
+    accounts?: any;
 }

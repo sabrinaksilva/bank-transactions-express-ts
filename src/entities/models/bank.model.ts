@@ -1,5 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, } from "typeorm";
-import { CreateDateColumn, UpdateDateColumn } from 'typeorm';
+
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { BankAccount } from "./account.model";
 
 

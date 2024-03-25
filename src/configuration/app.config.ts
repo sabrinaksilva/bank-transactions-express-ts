@@ -3,6 +3,8 @@ import { Request, Response, NextFunction } from "express"
 import cors from "cors";
 
 const express = require("express");
+const router = express.Router();
+
 const app = express()
 
 const NO_CONTENT_HTTP_STATUS: number = 204
@@ -30,6 +32,17 @@ const corsOption = {
 
 app.use(cors(corsOption));
 app.use(express.json());
+
+// require("../rest/routes/user.routes")(app);
+
+
+const usersController = require("../rest/controllers/user.controller");
+
+router.post("/users", usersController.register);
+
+app.use('/api/v1', router);
+
+
 
 
 app.use((error: { status: any; message: any; }, req: Request, resp: Response, next: NextFunction) => {
