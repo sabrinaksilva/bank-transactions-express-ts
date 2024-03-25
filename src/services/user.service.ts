@@ -28,7 +28,7 @@ exports.create = async (userRequestDTO: IUserCreateAccount) => {
         passwordEncrypted: encodedPass
     }
 
-    return (await userRepository.insert(user)).raw.id;
+    return (await userRepository.insert(user)).identifiers;
 
 }
 
