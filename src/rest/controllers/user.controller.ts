@@ -18,9 +18,9 @@ exports.register = async (req: Request, resp: Response, next: NextFunction) => {
             })
 
 
-        } catch (err) {
+        } catch (err: Error | any) {
             console.log(err);
-            const error = new Error("Unexpected error to create user");
+            const error = new Error(err.message || "Unexpected error to create user");
             next(error);
         }
     }
