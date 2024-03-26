@@ -19,7 +19,7 @@ export default class Bank {
 
 
     @Column({ unique: true })
-    "registrationNumber": number;
+    "registrationNumber": string;
 
 
     @Column({ nullable: false })
@@ -27,12 +27,12 @@ export default class Bank {
 
 
     @CreateDateColumn()
-    "createdAt": Date;
+    "createdAt"?: Date;
 
 
     @UpdateDateColumn()
-    "updatedAt": Date;
+    "updatedAt"?: Date;
 
-    "accounts": Array<BankAccount>;
+    "accounts"?: Array<BankAccount>;
 
 }
