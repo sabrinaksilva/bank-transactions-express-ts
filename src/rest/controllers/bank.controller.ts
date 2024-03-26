@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express"
 import { ICreateBank } from "../../entities/dtos/request/bank.requests.dtos";
+import { ApiError } from "../../entities/dtos/shared/api.error.interface";
 const bankService = require("../../services/bank.service")
 
 exports.create = async (req: Request, resp: Response, next: NextFunction) => {
@@ -23,27 +24,35 @@ exports.create = async (req: Request, resp: Response, next: NextFunction) => {
 
         } catch (err: { status: number; message: string; } | any) {
             console.log(err);
-            let error;
+
+            let error: ApiError;
+
             if (err.code === 'ER_DUP_ENTRY') {
-                error = new Error("Bank agency already exists!");
+                error = {
+                    message: "Bank agency already exists!",
+                    status: 400
+                };
             } else {
                 error = {
                     message: err.message || "Unexpected error to create bank",
                     status: err.status || 500
-                }
+                };
             }
 
             next(error);
         }
     } else {
-        const error = new Error("No fields provided to create a new Bank agency");
+        const error: ApiError = {
+            message: "No fields provided to create a new Bank agency",
+            status: 400
+        };
         next(error);
     }
 
 
 }
 
-function validateMandatoryFields(body: any, next: NextFunction) {
+function validateMandatoryFields(body: any, next: NextFunction): void {
     let message = null;
     if (!body.companyName) {
         message = "The company name must be provided!";

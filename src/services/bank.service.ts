@@ -1,11 +1,8 @@
-
-
-import { mysqlDataSource } from "../configuration/datasource.config";
-import { Repository } from "typeorm";
-import { IUserCreateAccount } from '../entities/dtos/request/user.request.dto';
-
+import {mysqlDataSource} from "../configuration/datasource.config";
+import {Repository} from "typeorm";
 import Bank from "../entities/models/bank.model";
-import { ICreateBank } from "../entities/dtos/request/bank.requests.dtos";
+import {ICreateBank} from "../entities/dtos/request/bank.requests.dtos";
+
 const bankRepository: Repository<Bank> = mysqlDataSource.getRepository(Bank);
 
 
