@@ -19,5 +19,10 @@ app.use(express.json());
 require("../rest/routes/user.routes")(app);
 require("../rest/routes/bank.routes")(app)
 
+app.use((error: { status: any; message: any; }, req: Request, resp: Response, next: NextFunction) => {
+    resp.status(error.status || 500).json({
+        message: error.message || 'Unexpected error'
+    })
+})
 
 export default app;

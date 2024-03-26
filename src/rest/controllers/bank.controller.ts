@@ -28,8 +28,8 @@ exports.create = async (req: Request, resp: Response, next: NextFunction) => {
                 error = new Error("Bank agency already exists!");
             } else {
                 error = {
-                    message: err.message || "Unexpected error to create user",
-                    status: err.status || 400
+                    message: err.message || "Unexpected error to create bank",
+                    status: err.status || 500
                 }
             }
 
@@ -44,26 +44,24 @@ exports.create = async (req: Request, resp: Response, next: NextFunction) => {
 }
 
 function validateMandatoryFields(body: any, next: NextFunction) {
+    let message = null;
     if (!body.companyName) {
+        message = "The company name must be provided!";
+    }
+    if (!body.tradeName) {
+        message = "The trade name must be provided!";
+    }
+    if (!body.registrationNumber) {
+        message = "The registration number must be provided!";
+    }
+    if (!body.taxes) {
+        message = "taxes (%) field must be provided!";
+    }
+
+    if (message) {
         let error: { status: number; message: string; } = {
             status: 400, message: "The company name must be provided!"
         };
-        next(error);
-    }
-    if (!body.tradeName) {
-        let error: { status: number; message: string; } = {
-            status: 400, message: "The trade name must be provided!"
-        };
-        next(error);
-    }
-    if (!body.registrationNumber) {
-        let error: { status: number; message: string; } = {
-            status: 400, message: "The registration number must be provided!"
-        };
-        next(error);
-    }
-    if (!body.taxes) {
-        const error = new Error("taxes (%) field must be provided!");
         next(error);
     }
 }
