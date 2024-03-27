@@ -12,6 +12,4 @@ export default class User {
 
     @Column({nullable: false})
     passwordEncrypted?: string;
-
-    accounts?: any;
 }

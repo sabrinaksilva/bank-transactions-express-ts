@@ -20,14 +20,8 @@ export default class Bank {
     @Column({unique: true})
     'registrationNumber': string;
 
-
-    @Column({nullable: false})
-    'taxes': number;
-
-
     @CreateDateColumn()
     'createdAt'?: Date;
-
 
     @UpdateDateColumn()
     'updatedAt'?: Date;

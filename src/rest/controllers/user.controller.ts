@@ -34,29 +34,7 @@ exports.register = async (req: Request, resp: Response, next: NextFunction) => {
 exports.login = async (req: Request, resp: Response, next: NextFunction) => {
     const {body} = req;
 
-    if (body != null) {
-        try {
-            const user: IUserLogin = {
-                document: body.document,
-                password: body.password
-            };
-
-            let t = await userService.getJwtToken(user);
-
-            resp.status(200).send({
-                token: t
-            });
-
-
-        } catch (err: ApiError | Error | any) {
-            const error: ApiError = {
-                message: err.message || 'Unexpected error to log in user',
-                status: err.status || 500,
-                messageException: err.messageException || null
-            };
-            next(error);
-        }
-    } else {
+    if (!body) {
         const error: ApiError = {
             message: 'No credentials were provided to log in',
             status: 400
@@ -64,4 +42,27 @@ exports.login = async (req: Request, resp: Response, next: NextFunction) => {
         next(error);
     }
 
+    try {
+        const user: IUserLogin = {
+            document: body.document,
+            password: body.password
+        };
+
+        await userService.getJwtToken(user).then((token: string) => {
+            resp.status(200).send(
+                {
+                    token: token
+                }
+            );
+        });
+
+
+    } catch (err: ApiError | Error | any) {
+        const error: ApiError = {
+            message: err.message || 'Unexpected error to log in user',
+            status: err.status || 500,
+            messageException: err.messageException || null
+        };
+        next(error);
+    }
 };

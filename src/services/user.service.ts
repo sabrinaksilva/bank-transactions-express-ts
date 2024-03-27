@@ -3,6 +3,8 @@ import { Repository } from 'typeorm';
 import { IUserCreateAccount, IUserLogin } from '../entities/dtos/request/user.request.dto';
 import User from '../entities/models/user.model';
 
+require('dotenv/config');
+
 const jwt = require('jsonwebtoken');
 
 const userRepository: Repository<User> = mysqlDataSource.getRepository(User);
@@ -34,53 +36,44 @@ exports.create = async (userRequestDTO: IUserCreateAccount) => {
 };
 
 exports.getJwtToken = async (userLoginDTO: IUserLogin) => {
-    require('dotenv/config');
     const secretJwt: string | any = process.env.JWT_SECRET;
+    const expThreeDays: number = Math.floor(Date.now() / 1000) + (3 * 24 * 60 * 60);
 
     if (!userLoginDTO.document || !userLoginDTO.password) {
-        throw new Error('InvalidCredentiais');
+        throw new Error('Invalid credentials');
     }
 
-    let user = await userRepository.findOne(
+    let user: User = {};
+
+    await userRepository.findOne(
         {
             where: {
                 document: userLoginDTO.document,
             }
-        });
-
-
-    if (user) {
-        if (!passwordEncoderUtils.validateIfHashMatchesPassword(userLoginDTO.password, user.passwordEncrypted)) {
-            throw new Error('InvalidCredentiais');
+        }).then(result => {
+        if (result == null) {
+            throw new Error('User not found');
         }
+        user = result;
+    });
 
-        const expThreeDays: number = Math.floor(Date.now() / 1000) + (3 * 24 * 60 * 60);
-        // return jwt.sign(
-        //     {
-        //         'id': user.id,
-        //         'exp': expThreeDays,
-        //         'sub': user.name,
-        //     },
-        //     secretJwt,
-        //     { algorithm: 'HS512' });
 
-        const claims = {
-            'id': user.id,
-            'exp': expThreeDays,
-            'sub': user.name,
-        };
-        return jwt.sign(
-            claims,
-            secretJwt,
-            {algorithm: 'HS512'}, function (err: any, result: string) {
-                if (err) throw err;
-                // return result;
-            });
-
-    } else {
-        throw new Error('User not found');
+    if (!passwordEncoderUtils.validateIfHashMatchesPassword(userLoginDTO.password, user.passwordEncrypted)) {
+        throw new Error('InvalidCredentiais');
     }
 
-    // return signedToken;
+    const claims = {
+        'id': user.id,
+        'exp': expThreeDays,
+        'sub': user.name,
+    };
+
+
+    return jwt.sign(
+        claims,
+        secretJwt,
+        {algorithm: 'HS512'}
+    );
+
 
 };

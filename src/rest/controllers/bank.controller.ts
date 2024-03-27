@@ -14,8 +14,7 @@ exports.create = async (req: Request, resp: Response, next: NextFunction) => {
             const bankDTO: ICreateBank = {
                 companyName: body.companyName,
                 tradeName: body.tradeName,
-                registrationNumber: body.registrationNumber,
-                taxes: body.taxes
+                registrationNumber: body.registrationNumber
 
             };
 
@@ -63,9 +62,6 @@ function validateMandatoryFields(body: any, next: NextFunction): void {
     }
     if (!body.registrationNumber) {
         message = 'The registration number must be provided!';
-    }
-    if (!body.taxes) {
-        message = 'taxes (%) field must be provided!';
     }
 
     if (message) {

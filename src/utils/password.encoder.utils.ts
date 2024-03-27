@@ -12,6 +12,9 @@ exports.encodePass = (originalPassword: string) => {
 };
 
 
-exports.validateIfHashMatchesPassword = (unencodedPasswordAttempt: string, passwordHash: string) => {
-    return bcrypt.compareSync(unencodedPasswordAttempt, passwordHash);
+exports.validateIfHashMatchesPassword = (unEncodedPasswordAttempt?: string, passwordHash?: string): boolean => {
+    if (!passwordHash || !unEncodedPasswordAttempt) {
+        return false;
+    }
+    return bcrypt.compareSync(unEncodedPasswordAttempt, passwordHash);
 };
