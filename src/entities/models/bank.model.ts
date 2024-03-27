@@ -1,38 +1,37 @@
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { BankAccount } from './account.model';
 
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
-import { BankAccount } from "./account.model";
 
-
-@Entity({ name: "Bank" })
+@Entity({name: 'Bank'})
 export default class Bank {
 
 
     @PrimaryGeneratedColumn()
-    "id"?: number;
+    'id'?: number;
 
-    @Column({ nullable: false })
-    "companyName": string;
-
-
-    @Column({ nullable: false })
-    "tradeName": string;
+    @Column({nullable: false})
+    'companyName': string;
 
 
-    @Column({ unique: true })
-    "registrationNumber": string;
+    @Column({nullable: false})
+    'tradeName': string;
 
 
-    @Column({ nullable: false })
-    "taxes": number;
+    @Column({unique: true})
+    'registrationNumber': string;
+
+
+    @Column({nullable: false})
+    'taxes': number;
 
 
     @CreateDateColumn()
-    "createdAt"?: Date;
+    'createdAt'?: Date;
 
 
     @UpdateDateColumn()
-    "updatedAt"?: Date;
+    'updatedAt'?: Date;
 
-    "accounts"?: Array<BankAccount>;
+    'accounts'?: Array<BankAccount>;
 
 }

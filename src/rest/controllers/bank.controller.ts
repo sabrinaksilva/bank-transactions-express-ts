@@ -1,10 +1,11 @@
-import { Request, Response, NextFunction } from "express"
-import { ICreateBank } from "../../entities/dtos/request/bank.requests.dtos";
-import { ApiError } from "../../entities/dtos/shared/api.error.interface";
-const bankService = require("../../services/bank.service")
+import { NextFunction, Request, Response } from 'express';
+import { ICreateBank } from 'src/entities/dtos/request/bank.requests.dtos';
+import { ApiError } from 'src/entities/dtos/shared/api.error.interface';
+
+const bankService = require('../../services/bank.service');
 
 exports.create = async (req: Request, resp: Response, next: NextFunction) => {
-    const { body } = req;
+    const {body} = req;
 
     validateMandatoryFields(body, next);
 
@@ -16,11 +17,11 @@ exports.create = async (req: Request, resp: Response, next: NextFunction) => {
                 registrationNumber: body.registrationNumber,
                 taxes: body.taxes
 
-            }
+            };
 
             resp.status(201).send({
                 id: await bankService.create(bankDTO)
-            })
+            });
 
         } catch (err: { status: number; message: string; } | any) {
             console.log(err);
@@ -29,12 +30,12 @@ exports.create = async (req: Request, resp: Response, next: NextFunction) => {
 
             if (err.code === 'ER_DUP_ENTRY') {
                 error = {
-                    message: "Bank agency already exists!",
+                    message: 'Bank agency already exists!',
                     status: 400
                 };
             } else {
                 error = {
-                    message: err.message || "Unexpected error to create bank",
+                    message: err.message || 'Unexpected error to create bank',
                     status: err.status || 500
                 };
             }
@@ -43,33 +44,33 @@ exports.create = async (req: Request, resp: Response, next: NextFunction) => {
         }
     } else {
         const error: ApiError = {
-            message: "No fields provided to create a new Bank agency",
+            message: 'No fields provided to create a new Bank agency',
             status: 400
         };
         next(error);
     }
 
 
-}
+};
 
 function validateMandatoryFields(body: any, next: NextFunction): void {
     let message = null;
     if (!body.companyName) {
-        message = "The company name must be provided!";
+        message = 'The company name must be provided!';
     }
     if (!body.tradeName) {
-        message = "The trade name must be provided!";
+        message = 'The trade name must be provided!';
     }
     if (!body.registrationNumber) {
-        message = "The registration number must be provided!";
+        message = 'The registration number must be provided!';
     }
     if (!body.taxes) {
-        message = "taxes (%) field must be provided!";
+        message = 'taxes (%) field must be provided!';
     }
 
     if (message) {
         let error: { status: number; message: string; } = {
-            status: 400, message: "The company name must be provided!"
+            status: 400, message: 'The company name must be provided!'
         };
         next(error);
     }

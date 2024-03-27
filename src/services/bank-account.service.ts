@@ -1,7 +1,7 @@
-import { mysqlDataSource } from '../configuration/datasource.config';
 import { Repository } from 'typeorm';
-import Bank from '../entities/models/bank.model';
-import { ICreateBank } from '../entities/dtos/request/bank.requests.dtos';
+import Bank from 'src/entities/models/bank.model';
+import { mysqlDataSource } from 'src/configuration/datasource.config';
+import { ICreateBank } from 'src/entities/dtos/request/bank.requests.dtos';
 
 const bankRepository: Repository<Bank> = mysqlDataSource.getRepository(Bank);
 
@@ -19,3 +19,4 @@ exports.create = async (bankCreateRequest: ICreateBank) => {
 
 };
 
+ 
