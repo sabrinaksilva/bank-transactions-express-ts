@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { IUserCreateAccount, IUserLogin } from 'src/entities/dtos/request/user.request.dto';
-import { ApiError } from 'src/entities/dtos/shared/api.error.interface';
+import { IUserCreateAccount, IUserLogin } from '../../entities/dtos/request/user.request.dto';
+import { ApiError } from '../../entities/dtos/shared/api.error.interface';
 
 const userService = require('../../services/user.service');
 

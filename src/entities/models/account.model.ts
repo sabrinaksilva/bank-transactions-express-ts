@@ -2,10 +2,11 @@ import Bank from './bank.model';
 import { AccountType } from '../enums/bank-account.enums';
 import { Entity } from 'typeorm/decorator/entity/Entity';
 import { PrimaryGeneratedColumn } from 'typeorm/decorator/columns/PrimaryGeneratedColumn';
-import { Column, ManyToOne } from 'typeorm';
+import { Check, Column, ManyToOne } from 'typeorm';
 
 
 @Entity({name: 'Account'})
+@Check('balance >= 0')
 export class BankAccount {
 
     @PrimaryGeneratedColumn()

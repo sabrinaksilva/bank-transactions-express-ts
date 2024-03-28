@@ -1,11 +1,11 @@
 import { Repository } from 'typeorm';
-import { mysqlDataSource } from 'src/configuration/datasource.config';
-import { BankAccount } from 'src/entities/models/account.model';
-import Bank from 'src/entities/models/bank.model';
-import { ICreateBankAccount } from 'src/entities/dtos/request/bank-account.requests.dtos';
+import { mysqlDataSource } from '../configuration/datasource.config';
+import { BankAccount } from '../entities/models/account.model';
+import Bank from '../entities/models/bank.model';
+import { ICreateBankAccount } from '../entities/dtos/request/bank-account.requests.dtos';
 
 const bankAccountRepository: Repository<BankAccount> = mysqlDataSource.getRepository(BankAccount);
-const bankService = require('src/services/bank.service');
+const bankService = require('../services/bank.service');
 
 async function validateAccountAlreadyExists(accountRequest: ICreateBankAccount, bank: Bank) {
     if (await bankAccountRepository.findOne({

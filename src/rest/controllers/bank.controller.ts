@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { ICreateBank } from 'src/entities/dtos/request/bank.requests.dtos';
-import { ApiError } from 'src/entities/dtos/shared/api.error.interface';
+import { ICreateBank } from '../../entities/dtos/request/bank.requests.dtos';
+import { ApiError } from '../../entities/dtos/shared/api.error.interface';
 
 const bankService = require('../../services/bank.service');
 
