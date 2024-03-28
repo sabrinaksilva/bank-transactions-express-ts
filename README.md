@@ -10,6 +10,7 @@
 - Execute Bank Transactions between accounts, managing the rollback if some error occur
 - Errors Handling in order to return "friendly" messages at return, in addition to the HttpMethod for the error response
 - Automated tests to cover the most critical points
+- Authenticate via JWT token
 
 ## Project setup
 - Make sure you have Node installed. At this project, the version used can be found [here](https://nodejs.org/en/blog/release/v18.19.1#2024-02-14-version-18191-hydrogen-lts-rafaelgss-prepared-by-marco-ippolito), such as the instalation files and tutorials for a range of operational systems
