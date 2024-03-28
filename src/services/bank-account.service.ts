@@ -22,21 +22,32 @@ async function validateAccountAlreadyExists(accountRequest: ICreateBankAccount, 
 
 exports.create = async (accountRequest: ICreateBankAccount) => {
     let bank: Bank;
+
+    if (accountRequest.balance < 0) {
+        throw new Error('Account balance can\'t be negative');
+    }
+
+
     try {
         bank = await bankService.findByName(accountRequest.bankName);
     } catch (err) {
         throw new Error('Bank not found');
     }
-    await validateAccountAlreadyExists(accountRequest, bank);
 
     let bankAccount: BankAccount = {
         bank: bank,
         agency: accountRequest.agency,
         accountNumber: accountRequest.accountNumber,
-        accountType: accountRequest.accountType
+        accountType: accountRequest.accountType,
+        balance: accountRequest.balance,
+        locked: false
     };
 
     return (await bankAccountRepository.insert(bankAccount)).identifiers;
+};
+
+
+exports.makeTransfer = async (originAccountId: number, destinationAccountId: number, amount: number) => {
 
 };
 

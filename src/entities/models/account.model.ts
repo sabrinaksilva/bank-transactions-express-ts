@@ -8,7 +8,6 @@ import { Column, ManyToOne } from 'typeorm';
 @Entity({name: 'Account'})
 export class BankAccount {
 
-
     @PrimaryGeneratedColumn()
     id?: number;
 
@@ -18,16 +17,16 @@ export class BankAccount {
     @Column({nullable: false})
     agency?: string;
 
-
-    // {
-    //     unique: true
-    // }      // dps ate da pra ver de colocar unico por banco + atgencia + conta
-    // VALIDAR NO SERVICE
     @Column({nullable: false})
     accountNumber?: string;
 
     @Column({nullable: false})
     accountType?: AccountType;
 
+    @Column({nullable: false})
+    balance?: number;
+
+    @Column({nullable: false})
+    locked?: boolean | false;
 
 }
