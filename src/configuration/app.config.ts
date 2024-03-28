@@ -12,12 +12,13 @@ const corsOption = {
     methods: 'GET,POST,HEAD,OPTIONS,PUT,PATCH,DELETE',
     credentials: true,
 };
-
+ 
 app.use(cors(corsOption));
 app.use(express.json());
 
 require('../rest/routes/user.routes')(app);
 require('../rest/routes/bank.routes')(app);
+require('../rest/routes/bank-account.routes')(app);
 
 app.use((error: { status: any; message: any; }, req: Request, resp: Response, next: NextFunction) => {
     resp.status(error.status || 500).json({
