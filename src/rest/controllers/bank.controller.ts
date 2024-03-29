@@ -25,6 +25,7 @@ exports.create = async (req: Request, resp: Response, next: NextFunction) => {
         });
 
     } catch (err: { status?: number; message?: string; } | any) {
+
         if (err.code === 'ER_DUP_ENTRY') throw new DuplicatedResourceError('Bank agency already exists!');
         throw new ApiError(err.message, err.status);
     }

@@ -6,7 +6,6 @@ import { NotFoundError } from '../errors/not-found.error';
 
 const bankRepository: Repository<Bank> = mysqlDataSource.getRepository(Bank);
 
-
 exports.create = async (bankCreateRequest: ICreateBank) => {
     let bank: Bank = {
         companyName: bankCreateRequest.companyName,

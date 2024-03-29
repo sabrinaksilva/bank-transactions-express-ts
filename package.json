@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "bcrypt-nodejs": "^0.0.3",
+    "catch-decorator": "^2.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.1",
@@ -32,6 +33,7 @@
     "jsonwebtoken": "^9.0.2",
     "mysql": "^2.18.1",
     "mysql2": "^3.9.2",
+    "reflect-metadata": "^0.2.2",
     "typeorm": "^0.3.20",
     "typeorm-transactional": "^0.5.0"
   }
