@@ -1,31 +1,16 @@
 import { NextFunction, Request, Response } from 'express';
-import { ApiError } from '../../entities/dtos/shared/api.error.interface';
 import { ICreateBankAccount } from '../../entities/dtos/request/bank-account.requests.dtos';
+import { BadRequestError } from '../../errors/bad-request.error';
 
 const bankAccountService = require('../../services/bank-account.service');
 
 exports.create = async (req: Request<ICreateBankAccount>, resp: Response, next: NextFunction) => {
-
     const {body} = req;
     if (!body) {
-        const error: ApiError = {
-            message: 'No data provided to create account',
-            status: 400
-        };
-        next(error);
+        throw new BadRequestError('Missing data to create account');
     }
-    try {
-        resp.status(201).send({
-            id: await bankAccountService.create(body)
-        });
+    resp.status(201).send({
+        id: await bankAccountService.create(body)
+    });
 
-
-    } catch (err: ApiError | Error | any) {
-        const error: ApiError = {
-            message: err.message || 'Unexpected error',
-            status: err.status || 500,
-            messageException: err.messageException || null
-        };
-        next(error);
-    }
 };

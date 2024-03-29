@@ -1,17 +1,15 @@
 import { NextFunction, Request, Response } from 'express';
 import { IUserCreateAccount, IUserLogin } from '../../entities/dtos/request/user.request.dto';
-import { ApiError } from '../../entities/dtos/shared/api.error.interface';
+import { ApiError } from '../../errors/api.error';
+import { UnauthorizedError } from '../../errors/unauthorized.error';
+import { BadRequestError } from '../../errors/bad-request.error';
 
 const userService = require('../../services/user.service');
 
 exports.register = async (req: Request, resp: Response, next: NextFunction) => {
     const {body} = req;
-    if (!body) {
-        const error: ApiError = {
-            message: 'No data provided to register',
-            status: 400
-        };
-        next(error);
+    if (!body || !body.document) {
+        throw new BadRequestError('Missing data to register');
     }
     try {
         const user: IUserCreateAccount = {
@@ -25,13 +23,8 @@ exports.register = async (req: Request, resp: Response, next: NextFunction) => {
         });
 
 
-    } catch (err: ApiError | Error | any) {
-        const error: ApiError = {
-            message: err.message || 'Unexpected error to create user',
-            status: err.status || 500,
-            messageException: err.messageException || null
-        };
-        next(error);
+    } catch (err: Error | any) {
+        throw new ApiError(err.message ?? 'Unexpected error to create user', err.status);
     }
 };
 
@@ -39,11 +32,7 @@ exports.login = async (req: Request, resp: Response, next: NextFunction) => {
     const {body} = req;
 
     if (!body) {
-        const error: ApiError = {
-            message: 'No credentials were provided to log in',
-            status: 400
-        };
-        next(error);
+        throw new UnauthorizedError('Missing credentials');
     }
 
     try {
@@ -61,12 +50,7 @@ exports.login = async (req: Request, resp: Response, next: NextFunction) => {
         });
 
 
-    } catch (err: ApiError | Error | any) {
-        const error: ApiError = {
-            message: err.message || 'Unexpected error to log in user',
-            status: err.status || 500,
-            messageException: err.messageException || null
-        };
-        next(error);
+    } catch (err: Error | any) {
+        throw new ApiError(err.message, err.status);
     }
 };

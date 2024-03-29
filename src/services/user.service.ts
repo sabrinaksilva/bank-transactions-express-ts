@@ -2,6 +2,9 @@ import { mysqlDataSource } from '../configuration/datasource.config';
 import { Repository } from 'typeorm';
 import { IUserCreateAccount, IUserLogin } from '../entities/dtos/request/user.request.dto';
 import User from '../entities/models/user.model';
+import { ApiError } from '../errors/api.error';
+import { UnauthorizedError } from '../errors/unauthorized.error';
+import { NotFoundError } from '../errors/not-found.error';
 
 require('dotenv/config');
 
@@ -20,7 +23,7 @@ exports.create = async (userRequestDTO: IUserCreateAccount) => {
     });
 
     if (count && count > 0) {
-        throw new Error('User already registred.');
+        throw new ApiError('User already registred.', 409);
     }
 
     const encodedPass: string = passwordEncoderUtils.encodePass(userRequestDTO.initialPassword);
@@ -39,8 +42,8 @@ exports.getJwtToken = async (userLoginDTO: IUserLogin) => {
     const secretJwt: string | any = process.env.JWT_SECRET;
     const expThreeDays: number = Math.floor(Date.now() / 1000) + (3 * 24 * 60 * 60);
 
-    if (!userLoginDTO.document || !userLoginDTO.password) {
-        throw new Error('Invalid credentials');
+    if (!userLoginDTO.document ?? !userLoginDTO.password) {
+        throw new UnauthorizedError('Invalid credentials');
     }
 
     let user: User = {};
@@ -52,14 +55,14 @@ exports.getJwtToken = async (userLoginDTO: IUserLogin) => {
             }
         }).then(result => {
         if (result == null) {
-            throw new Error('User not found');
+            throw new NotFoundError('User not found');
         }
         user = result;
     });
 
 
     if (!passwordEncoderUtils.validateIfHashMatchesPassword(userLoginDTO.password, user.passwordEncrypted)) {
-        throw new Error('InvalidCredentiais');
+        throw new UnauthorizedError('Invalid credentials');
     }
 
     const claims = {

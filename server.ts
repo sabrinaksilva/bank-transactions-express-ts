@@ -6,7 +6,7 @@ import app from './src/configuration/app.config';
 const connect = async () => {
     dotenv.config();
 
-    const SERVER_PORT = process.env.SERVER_PORT || 5000;
+    const SERVER_PORT = process.env.SERVER_PORT ?? 5000;
 
     try {
 
@@ -21,7 +21,7 @@ const connect = async () => {
                 console.log('\n\n\n Error during Data Source initialization:', err);
             });
 
- 
+
         app.listen(SERVER_PORT, () => {
             console.log(`Server running at ${SERVER_PORT}`);
         });

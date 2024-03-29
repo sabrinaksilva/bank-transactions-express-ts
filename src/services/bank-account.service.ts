@@ -4,6 +4,8 @@ import { BankAccount } from '../entities/models/account.model';
 import Bank from '../entities/models/bank.model';
 import { ICreateBankAccount } from '../entities/dtos/request/bank-account.requests.dtos';
 import { runOnTransactionRollback } from 'typeorm-transactional';
+import { ApiError } from '../errors/api.error';
+import { DuplicatedResourceError } from '../errors/duplicated-resource.error';
 
 const bankAccountRepository: Repository<BankAccount> = mysqlDataSource.getRepository(BankAccount);
 const bankService = require('../services/bank.service');
@@ -17,23 +19,16 @@ async function validateAccountAlreadyExists(accountRequest: ICreateBankAccount, 
             accountType: accountRequest.accountType
         }
     })) {
-        throw new Error('Bank account already exists');
+        throw new DuplicatedResourceError('Bank account already exists');
     }
 }
 
 exports.create = async (accountRequest: ICreateBankAccount) => {
-    let bank: Bank;
-
     if (accountRequest.balance < 0) {
-        throw new Error('Account balance can\'t be negative');
+        throw new ApiError('Account balance can\'t be negative', 400);
     }
 
-
-    try {
-        bank = await bankService.findByName(accountRequest.bankName);
-    } catch (err) {
-        throw new Error('Bank not found');
-    }
+    let bank: Bank = await bankService.findByName(accountRequest.bankName);
 
     let bankAccount: BankAccount = {
         bank: bank,
@@ -45,9 +40,6 @@ exports.create = async (accountRequest: ICreateBankAccount) => {
     };
 
     return (await bankAccountRepository.insert(bankAccount)).identifiers;
-
-    // TO-DO: handle insert errors
-
 };
 
 async function lockForTransactions(originAccount: BankAccount, destinationAccount: BankAccount) {
@@ -56,6 +48,18 @@ async function lockForTransactions(originAccount: BankAccount, destinationAccoun
     return await bankAccountRepository.save([originAccount, destinationAccount]);
 }
 
+
+function getOriginAccount(originAccount: BankAccount | undefined, accounts: BankAccount[], originAccountId: number) {
+    originAccount = accounts.filter(account => account.id === originAccountId).pop();
+    if (!originAccount) throw new ApiError('Origin account not found', 404);
+    return originAccount;
+}
+
+function getDestinationAccount(destinationAccount: BankAccount | undefined, accounts: BankAccount[], destinationAccountId: number) {
+    destinationAccount = accounts.filter(account => account.id === destinationAccountId).pop();
+    if (!destinationAccount) throw new ApiError('Destination account not found', 404);
+    return destinationAccount;
+}
 
 exports.makeTransfer = async (originAccountId: number, destinationAccountId: number, amount: number) => {
     let originAccount: BankAccount | undefined;
@@ -78,20 +82,16 @@ exports.makeTransfer = async (originAccountId: number, destinationAccountId: num
             ]
         });
         if (!accounts) accounts = [];
-
-        originAccount = accounts.filter(account => account.id === originAccountId).pop();
-        destinationAccount = accounts.filter(account => account.id === destinationAccountId).pop();
-
-        if (!originAccount) throw new Error('Origin account not found');
-        if (!destinationAccount) throw new Error('Destination account not found');
+        originAccount = getOriginAccount(originAccount, accounts, originAccountId);
+        destinationAccount = getDestinationAccount(destinationAccount, accounts, destinationAccountId);
 
         console.log('Waiting another transaction to end...');
     }
-    if (timedOut) throw new Error('Timed Out. Cancelling transaction...');
+    if (timedOut) throw new ApiError('Timed Out. Cancelling transaction...');
 
     [originAccount, destinationAccount] = await lockForTransactions(originAccount, destinationAccount);
 
-    if (originAccount.balance < amount) throw new Error('Insufficient balance for transfer');
+    if (originAccount.balance < amount) throw new ApiError('Insufficient balance for transfer', 400);
 
     originAccount.balance -= amount;
     destinationAccount.balance += amount;
@@ -100,7 +100,7 @@ exports.makeTransfer = async (originAccountId: number, destinationAccountId: num
     await bankAccountRepository.save([originAccount, destinationAccount]);
 
     runOnTransactionRollback(() => {
-        throw new Error('Unexpected error. Canceling transaction...');
+        throw new ApiError('Unexpected error. Canceling transaction...');
     });
 
 
