@@ -1,6 +1,7 @@
 import { AccountType } from '../../enums/bank-account.enums';
 
-export interface ICreateBankAccount {
+export interface IBankAccount {
+    id?: number;
     agency: string;
     accountNumber: string;
     accountType: AccountType;

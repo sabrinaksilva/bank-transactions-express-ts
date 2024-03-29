@@ -14,6 +14,7 @@ module.exports = (app: any) => {
 
     router.post('/', bankAccountController.create);
     router.post('/transfer', bankAccountController.makeTransfer);
+    router.get('/:id', bankAccountController.findById);
 
     app.use('/api/v1/banks/accounts', router);
 

@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import { ICreateBankAccount } from '../../entities/dtos/request/bank-account.requests.dtos';
+import { IBankAccount } from '../../entities/dtos/request/bank-account.requests.dtos';
 import { BadRequestError } from '../../errors/bad-request.error';
 
 const bankAccountService = require('../../services/bank-account.service');
 
-exports.create = async (req: Request<ICreateBankAccount>, resp: Response, next: NextFunction) => {
+exports.create = async (req: Request<IBankAccount>, resp: Response, next: NextFunction) => {
     const {body} = req;
     if (!body) {
         throw new BadRequestError('Missing data to create account');
@@ -25,5 +25,16 @@ exports.makeTransfer = async (req: Request, resp: Response, next: NextFunction) 
     resp.status(200).send({
         'message': 'Successfully transfer amount between accounts'
     });
+
+};
+
+
+exports.findById = async (req: Request, resp: Response, next: NextFunction) => {
+    const id = req.params['id'];
+    if (!id) {
+        throw new BadRequestError('The account id is required to find account');
+    }
+
+    resp.status(200).send(await bankAccountService.findById(parseInt(id)));
 
 };

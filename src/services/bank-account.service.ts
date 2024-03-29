@@ -2,15 +2,16 @@ import { Repository } from 'typeorm';
 import { mysqlDataSource } from '../configuration/datasource.config';
 import { BankAccount } from '../entities/models/account.model';
 import Bank from '../entities/models/bank.model';
-import { ICreateBankAccount } from '../entities/dtos/request/bank-account.requests.dtos';
+import { IBankAccount } from '../entities/dtos/request/bank-account.requests.dtos';
 import { runInTransaction, runOnTransactionRollback } from 'typeorm-transactional';
 import { ApiError } from '../errors/api.error';
 import { DuplicatedResourceError } from '../errors/duplicated-resource.error';
+import { NotFoundError } from '../errors/not-found.error';
 
 const bankAccountRepository: Repository<BankAccount> = mysqlDataSource.getRepository(BankAccount);
 const bankService = require('../services/bank.service');
 
-async function validateAccountAlreadyExists(accountRequest: ICreateBankAccount, bank: Bank) {
+async function validateAccountAlreadyExists(accountRequest: IBankAccount, bank: Bank) {
     if (await bankAccountRepository.findOne({
         where: {
             accountNumber: accountRequest.accountNumber,
@@ -23,7 +24,28 @@ async function validateAccountAlreadyExists(accountRequest: ICreateBankAccount, 
     }
 }
 
-exports.create = async (accountRequest: ICreateBankAccount) => {
+
+exports.findById = async (id: number) => {
+    const account = await bankAccountRepository.findOne({
+        where: {id: id},
+        relations: {
+            bank: true
+        }
+    });
+
+    if (!account) throw new NotFoundError('Bank account not found. Id = ' + id);
+
+    return {
+        agency: account.agency,
+        accountNumber: account.accountNumber,
+        accountType: account.accountType,
+        bankName: account.bank?.companyName,
+        balance: account.balance
+    };
+
+};
+
+exports.create = async (accountRequest: IBankAccount) => {
     if (accountRequest.balance < 0) {
         throw new ApiError('Account balance can\'t be negative', 400);
     }
