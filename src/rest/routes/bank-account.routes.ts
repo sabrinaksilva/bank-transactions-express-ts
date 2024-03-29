@@ -1,7 +1,17 @@
 module.exports = (app: any) => {
-    const bankAccountController = require('../controllers/bank-account.controller');
+    require('dotenv/config');
+    const authenticate: string | any = process.env.AUTHENTICATE;
 
+
+    const bankAccountController = require('../controllers/bank-account.controller');
     const router = require('express').Router();
+
+    if (authenticate === 'true') {
+        const authenticationMiddleware = require('../../middlewares/authentication.middleware');
+        app.use(authenticationMiddleware.authenticate);
+    }
+
+
     router.post('/', bankAccountController.create);
     router.post('/transfer', bankAccountController.makeTransfer);
 

@@ -5,13 +5,25 @@ import User from '../entities/models/user.model';
 import { ApiError } from '../errors/api.error';
 import { UnauthorizedError } from '../errors/unauthorized.error';
 import { NotFoundError } from '../errors/not-found.error';
+import { Jwt } from 'jsonwebtoken';
 
 require('dotenv/config');
-
+const passwordEncoderUtils = require('../utils/password.encoder.utils');
 const jwt = require('jsonwebtoken');
 
 const userRepository: Repository<User> = mysqlDataSource.getRepository(User);
-const passwordEncoderUtils = require('../utils/password.encoder.utils');
+const secretJwt: string | any = process.env.JWT_SECRET;
+const expThreeDays: number = Math.floor(Date.now() / 1000) + (3 * 24 * 60 * 60);
+
+exports.validateToken = (token?: string) => {
+    if (!token) throw new UnauthorizedError('User not logged in.');
+
+    const decodedToken = jwt.verify(jwt, secretJwt, {algorithm: 'HS512'}, (err: Error, decodedToken: Jwt | undefined | null | string) => {
+        if (err || !decodedToken) throw new UnauthorizedError('User not logged in.');
+
+    });
+
+};
 
 
 exports.create = async (userRequestDTO: IUserCreateAccount) => {
@@ -39,8 +51,6 @@ exports.create = async (userRequestDTO: IUserCreateAccount) => {
 };
 
 exports.getJwtToken = async (userLoginDTO: IUserLogin) => {
-    const secretJwt: string | any = process.env.JWT_SECRET;
-    const expThreeDays: number = Math.floor(Date.now() / 1000) + (3 * 24 * 60 * 60);
 
     if (!userLoginDTO.document ?? !userLoginDTO.password) {
         throw new UnauthorizedError('Invalid credentials');

@@ -3,10 +3,10 @@ import { initializeTransactionalContext } from 'typeorm-transactional';
 import 'express-async-errors';
 
 require('dotenv/config');
+initializeTransactionalContext();
 
 const errorHandlerMiddleware = require('../middlewares/error-handler.middleware');
 const express = require('express');
-initializeTransactionalContext();
 const app = express();
 
 const corsOption = {
