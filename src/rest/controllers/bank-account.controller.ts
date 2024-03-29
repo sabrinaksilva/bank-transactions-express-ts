@@ -38,3 +38,29 @@ exports.findById = async (req: Request, resp: Response, next: NextFunction) => {
     resp.status(200).send(await bankAccountService.findById(parseInt(id)));
 
 };
+
+
+exports.deleteById = async (req: Request, resp: Response, next: NextFunction) => {
+    const id = req.params['id'];
+    if (!id) {
+        throw new BadRequestError('The account id is required to find account');
+    }
+    await bankAccountService.deleteById(parseInt(id));
+
+    resp.status(200).send({'message': 'Successfully deleted account'});
+};
+
+exports.update = async (req: Request, resp: Response, next: NextFunction) => {
+    const id: string = req.params['id'];
+    if (!id)
+        throw new BadRequestError('The account id is required to find account');
+
+
+    const {body} = req;
+    if (!body)
+        throw new BadRequestError('Missing fields to update account');
+
+    await bankAccountService.update(body, id);
+    resp.status(204).send();
+
+};
