@@ -2,6 +2,7 @@ import { DataSource } from 'typeorm';
 import { BankAccount } from '../entities/models/account.model';
 import Bank from '../entities/models/bank.model';
 import User from '../entities/models/user.model';
+import { addTransactionalDataSource } from 'typeorm-transactional';
 
 require('dotenv/config');
 
@@ -14,7 +15,7 @@ const dbConfig = {
     DB_PORT: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 2222
 };
 
-export const mysqlDataSource = new DataSource({
+export const mysqlDataSource = addTransactionalDataSource(new DataSource({
     type: 'mysql',
     host: dbConfig.HOST,
     port: dbConfig.DB_PORT,
@@ -26,4 +27,4 @@ export const mysqlDataSource = new DataSource({
     migrations: ['../migrations/*.ts', '../migrations/*.js'],
     entities: [Bank, BankAccount, User],
 
-}); 
+}));

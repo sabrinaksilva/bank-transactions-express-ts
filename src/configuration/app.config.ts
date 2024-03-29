@@ -1,18 +1,18 @@
 require('dotenv/config');
 import { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
+import { initializeTransactionalContext } from 'typeorm-transactional';
 
 const express = require('express');
-
+initializeTransactionalContext();
 const app = express();
-
 
 const corsOption = {
     origin: '*',
     methods: 'GET,POST,HEAD,OPTIONS,PUT,PATCH,DELETE',
     credentials: true,
 };
- 
+
 app.use(cors(corsOption));
 app.use(express.json());
 

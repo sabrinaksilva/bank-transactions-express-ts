@@ -25,9 +25,9 @@ export class BankAccount {
     accountType?: AccountType;
 
     @Column({nullable: false})
-    balance?: number;
+    balance: number = 0;
 
     @Column({nullable: false})
-    locked?: boolean | false;
+    locked: boolean = false;
 
 }
