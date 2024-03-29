@@ -7,6 +7,8 @@
       authenticate requests
 - Create a Bank
 - Create a Bank account for an existent Bank
+    - PS: I removed the call from a possible method of validating the account's pre-existence as it was my own and was
+      not in the requirements
 - Find a Bank account by its id
 - Update Bank account by its id
 - Delete a Bank account by id
