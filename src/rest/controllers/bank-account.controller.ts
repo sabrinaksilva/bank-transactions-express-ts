@@ -20,8 +20,10 @@ exports.makeTransfer = async (req: Request, resp: Response, next: NextFunction) 
     if (!body || !body.originAccountId || !body.destinationAccountId || !body.amount) {
         throw new BadRequestError('The required parameters are required to make a transfer: originAccountId, destinationAccountId amount to transfer');
     }
-    resp.status(201).send({
-        id: await bankAccountService.makeTransfer(body.originAccountId, body.destinationAccountId, body.amount)
+
+    await bankAccountService.makeTransfer(body.originAccountId, body.destinationAccountId, body.amount);
+    resp.status(200).send({
+        'message': 'Successfully transfer amount between accounts'
     });
 
 };

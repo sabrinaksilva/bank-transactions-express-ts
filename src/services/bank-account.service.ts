@@ -73,14 +73,9 @@ exports.makeTransfer = async (originAccountId: number, destinationAccountId: num
         [originAccount, destinationAccount] = accounts;
 
         var timedOutWaitingAnotherTransactionsToEnd = false;
-        // setTimeout(function () {
-        //     timedOutWaitingAnotherTransactionsToEnd = true;
-        // }, 5 * 60 * 1000);
-        //
-
         setTimeout(function () {
             timedOutWaitingAnotherTransactionsToEnd = true;
-        }, 1);
+        }, 1 * 60 * 1000);
 
         while (!timedOutWaitingAnotherTransactionsToEnd && (originAccount?.locked || destinationAccount?.locked)) {
             accounts = await bankAccountRepository.find({
@@ -105,9 +100,12 @@ exports.makeTransfer = async (originAccountId: number, destinationAccountId: num
         destinationAccount.balance += amount;
         originAccount.locked = false;
         destinationAccount.locked = false;
+
+
         await bankAccountRepository.save([originAccount, destinationAccount]);
 
-        runOnTransactionRollback(() => {
+        runOnTransactionRollback((e: Error) => {
+            console.log(e.message);
             throw new ApiError('Unexpected error. Canceling transaction...');
         });
     });
